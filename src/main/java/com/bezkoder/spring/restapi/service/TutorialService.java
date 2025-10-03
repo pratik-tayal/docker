@@ -12,6 +12,15 @@ public class TutorialService {
 
   static List<Tutorial> tutorials = new ArrayList<Tutorial>();
   static long id = 0;
+  
+  public TutorialService(){
+	  List<Tutorial> tuts = new ArrayList<Tutorial>();
+	  tuts.add(new Tutorial(1, "The lion king", "This is a book about lion king", true));
+	  tuts.add(new Tutorial(2, "The tiger king", "This is a book about tiger king", false));
+	  tuts.add(new Tutorial(3, "The leopard king", "This is a book about leopard king", false));
+	  tuts.add(new Tutorial(4, "The panther king", "This is a book about panther king", true));
+	  this.tutorials = tuts;
+  }
 
   public List<Tutorial> findAll() {
     return tutorials;

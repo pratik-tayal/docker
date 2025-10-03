@@ -13,6 +13,13 @@ public class Tutorial {
 
   }
 
+  public Tutorial(long id, String title, String description, boolean published) {
+	  	this.id = id;
+	    this.title = title;
+	    this.description = description;
+	    this.published = published;
+	  }
+  
   public Tutorial(String title, String description, boolean published) {
     this.title = title;
     this.description = description;

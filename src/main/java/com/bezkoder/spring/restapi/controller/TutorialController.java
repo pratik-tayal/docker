@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -26,38 +28,37 @@ import com.bezkoder.spring.restapi.service.TutorialService;
 public class TutorialController {
   @Autowired
   TutorialService tutorialService;
-
+  
+ 
   @GetMapping("/tutorials")
-  public ResponseEntity<List<Tutorial>> getAllTutorials(@RequestParam(required = false) String title) {
-    try {
+  public ResponseEntity<List<Tutorial>> getAllTutorials() {
+    
       List<Tutorial> tutorials = new ArrayList<Tutorial>();
+      tutorials.add(new Tutorial(1, "The lion king", "This is a book about lion king", true));
+      tutorials.add(new Tutorial(2, "The tiger king", "This is a book about tiger king", false));
+      tutorials.add(new Tutorial(3, "The leopard king", "This is a book about leopard king", false));
+      tutorials.add(new Tutorial(4, "The panther king", "This is a book about panther king", true));
+	  
 
-      if (title == null)
-        tutorialService.findAll().forEach(tutorials::add);
-      else
-        tutorialService.findByTitleContaining(title).forEach(tutorials::add);
-
-      if (tutorials.isEmpty()) {
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-      }
-
-      return new ResponseEntity<>(tutorials, HttpStatus.OK);
-    } catch (Exception e) {
-      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+//      if (title == null)
+//        tutorialService.findAll().forEach(tutorials::add);
+//      else
+//        tutorialService.findByTitleContaining(title).forEach(tutorials::add);
+//
+//      if (tutorials.isEmpty()) {
+//      }
+      
+        return new ResponseEntity<>(tutorials, HttpStatus.OK);
   }
 
   @GetMapping("/tutorials/{id}")
-  public ResponseEntity<Tutorial> getTutorialById(@PathVariable("id") long id) {
+  public EntityModel<Tutorial> getTutorialById(@PathVariable("id") long id) {
     Tutorial tutorial = tutorialService.findById(id);
-
-    if (tutorial != null) {
-      return new ResponseEntity<>(tutorial, HttpStatus.OK);
-    } else {
-      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+    EntityModel<Tutorial> entityModel = EntityModel.of(tutorial);
+    entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(TutorialController.class).getAllTutorials()).withRel("all-tutorials"));
+    return entityModel;
   }
-
+  
   @PostMapping("/tutorials")
   public ResponseEntity<Tutorial> createTutorial(@RequestBody Tutorial tutorial) {
     try {
